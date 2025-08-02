@@ -37,6 +37,9 @@ circom multiplicador.circom --r1cs --wasm --sym
 # Gera a chave inicial usando o arquivo TAU pré-computado
 # Cria multiplicador_00.zkey: chave de prova inicial
 snarkjs groth16 setup multiplicador.r1cs ../powersOfTau28_hez_final_15.ptau multiplicador_00.zkey
+# O comando snarkjs groth16 setup pede entropia para adicionar aleatoriedade ao setup confiável do Groth16, 
+# garantindo a segurança da chave de prova (multiplicador_00.zkey) e protegendo contra manipulação, 
+# pois o setup depende de um segredo ("toxic waste") que não pode ser revelado.
 
 # Adiciona uma contribuição à cerimônia de confiança
 # Gera multiplicador_01.zkey: chave de prova com contribuição aleatória
@@ -129,6 +132,57 @@ snarkjs zkey export solidityverifier validaconta_01.zkey verificador.sol
 snarkjs zkey export soliditycalldata valores-entrada-publica.json prova.json > valores-entrada-solidity.txt
 ```
 
+## example with plonk
+### Comandos para validador conta - PLONK
+
+#### Passo 1: Compilação do circuito
+```shell
+cd exemplo-validaconta
+
+# Compila o circuito Circom gerando:
+# - validaconta.r1cs: representação R1CS (Rank-1 Constraint System) do circuito
+# - validaconta.wasm: arquivo WebAssembly para gerar testemunhas
+# - validaconta.sym: arquivo de símbolos para debugging
+circom validaconta.circom --r1cs --wasm --sym
+```
+
+#### Passo 2: Setup PLONK
+```shell
+# Gera as chaves PLONK usando o arquivo TAU pré-computado
+# Cria validaconta_plonk.zkey: chave de prova PLONK
+snarkjs plonk setup validaconta.r1cs ../powersOfTau28_hez_final_15.ptau validaconta_plonk.zkey
+
+# Extrai a chave de verificação pública
+# Gera chave-verificacao.json: chave pública para verificar provas
+snarkjs zkey export verificationkey validaconta_plonk.zkey chave-verificacao.json
+```
+
+#### Passo 3: Geração e verificação de provas
+```shell
+# Gera a testemunha (witness) com os valores de entrada
+# Cria testemunha.wtns: valores secretos que satisfazem o circuito
+node validaconta_js/generate_witness.js validaconta_js/validaconta.wasm valores-entrada.json testemunha.wtns
+
+# Gera a prova ZK usando PLONK
+# Cria prova.json: prova criptográfica
+# Cria valores-entrada-publica.json: inputs públicos da prova
+snarkjs plonk prove validaconta_plonk.zkey testemunha.wtns prova.json valores-entrada-publica.json
+
+# Verifica se a prova é válida
+# Retorna true se a prova está correta
+snarkjs plonk verify chave-verificacao.json valores-entrada-publica.json prova.json 
+```
+
+#### Passo 4: Exportação para Solidity
+```shell
+# Gera contrato Solidity para verificação on-chain
+# Cria verificador.sol: contrato inteligente para verificar provas
+snarkjs zkey export solidityverifier validaconta_plonk.zkey verificador.sol
+
+# Gera dados formatados para chamada do contrato Solidity
+# Cria valores-entrada-solidity.txt: parâmetros formatados para o contrato
+snarkjs generatecall valores-entrada-publica.json prova.json > valores-entrada-solidity.txt
+```
 ## reference 
 
 o curso foi ministrado por [JeffPrestes](https://www.linkedin.com/in/jeffprestes/), esse é um repositório com modificações p/ consulta futura.

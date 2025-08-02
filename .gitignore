@@ -148,3 +148,4 @@ exemplo-validaconta/verificador.sol
 exemplo-validaconta/validaconta_js/generate_witness.js
 exemplo-validaconta/validaconta_js/validaconta.wasm
 exemplo-validaconta/validaconta_js/witness_calculator.js
+exemplo-validaconta/validaconta_plonk.zkey

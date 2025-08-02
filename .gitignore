@@ -130,3 +130,21 @@ dist
 .pnp.*
 
 *.ptau
+
+# Saidas dos comandos do curso
+exemplo-multiplicador/chave-verificacao.json
+exemplo-multiplicador/multiplicador_01.zkey
+exemplo-multiplicador/prova.json
+exemplo-multiplicador/valores-entrada-solidity.txt
+exemplo-multiplicador/verificador.sol
+exemplo-multiplicador/multiplicador_js/generate_witness.js
+exemplo-multiplicador/multiplicador_js/multiplicador.wasm
+exemplo-multiplicador/multiplicador_js/witness_calculator.js
+exemplo-validaconta/chave-verificacao.json
+exemplo-validaconta/prova.json
+exemplo-validaconta/validaconta_01.zkey
+exemplo-validaconta/valores-entrada-solidity.txt
+exemplo-validaconta/verificador.sol
+exemplo-validaconta/validaconta_js/generate_witness.js
+exemplo-validaconta/validaconta_js/validaconta.wasm
+exemplo-validaconta/validaconta_js/witness_calculator.js
